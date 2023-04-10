@@ -1,11 +1,10 @@
-from fastapi import APIRouter, Depends
-from corn.models.pydantic.user import (
-    UserRegistrationResult,
-    UserRegistrationPayload
-)
-from corn.dao.user import UserDAO
 from typing import Annotated
 
+from fastapi import APIRouter, Depends
+
+from corn.dao.user import UserDAO
+from corn.models.pydantic.user import (UserRegistrationPayload,
+                                       UserRegistrationResult)
 
 router = APIRouter()
 

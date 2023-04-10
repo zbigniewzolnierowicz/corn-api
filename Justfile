@@ -5,7 +5,7 @@ run:
 dev:
     poetry run uvicorn corn.main:app --port 8000 --reload
 test:
-    poetry run tox
+    poetry run tox run-parallel
 test-unit:
     poetry run tox -e unit
 test-type:

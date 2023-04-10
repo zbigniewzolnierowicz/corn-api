@@ -1,6 +1,7 @@
 import json
-from starlette.testclient import TestClient
+
 from pytest import MonkeyPatch
+from starlette.testclient import TestClient
 
 
 def test_signup_valid(tc: TestClient):

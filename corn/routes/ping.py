@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
+
 from corn.config import settings
 from corn.dao.user import UserDAO
-
 
 router = APIRouter()
 

@@ -5,7 +5,7 @@ import factory
 from corn.models.sqlalchemy.user import User
 
 
-class UserSchemaFactory(factory.Factory):
+class UserSchemaFactory(factory.Factory):  # type: ignore
     class Meta:
         model = User
 
