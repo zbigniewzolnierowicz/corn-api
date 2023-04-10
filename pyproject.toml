@@ -9,12 +9,17 @@ readme = "README.md"
 python = "^3.10"
 fastapi = "^0.95.0"
 uvicorn = {extras = ["standard"], version = "^0.21.1"}
-
-[tool.poetry.group.test.dependencies]
-pytest = "^7.3.0"
-pytest-cov = "^4.0.0"
-httpx = "^0.23.3"
+sqlalchemy = "^2.0.9"
+psycopg2-binary = "^2.9.6"
+factory-boy = "^3.2.1"
+faker = "^18.4.0"
+types-factory-boy = "^0.4.1"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pylsp-mypy]
+enabled = true
+live_mode = true
+strict = true

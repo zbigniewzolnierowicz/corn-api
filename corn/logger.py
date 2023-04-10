@@ -1,7 +1,7 @@
 import logging
 
 
-class CustomLogger(logging.Logger):
+class CustomLogger(logging.Logger, logging.Formatter):
     grey = '\x1b[38;21m'
     blue = '\x1b[38;5;39m'
     yellow = '\x1b[38;5;226m'
@@ -9,10 +9,10 @@ class CustomLogger(logging.Logger):
     bold_red = '\x1b[31;1m'
     reset = '\x1b[0m'
 
-    def colorizer(self, color: str):
+    def colorizer(self, color: str) -> str:
         return f"{color}[%(levelname)s]{self.reset} [%(asctime)s]: %(message)s"
 
-    def __init__(self):
+    def __init__(self) -> None:
         logging.addLevelName(logging.CRITICAL, "FATAL")
         super().__init__("")
         self.FORMATS = {
@@ -23,13 +23,13 @@ class CustomLogger(logging.Logger):
             logging.CRITICAL: self.colorizer(self.bold_red),
         }
 
-    def format(self, record):
+    def format(self, record) -> str:
         log_fmt = self.FORMATS.get(record.levelno)
         formatter = logging.Formatter(log_fmt)
         return formatter.format(record)
 
     @classmethod
-    def set_as_default():
+    def set_as_default(self) -> None:
         logger = logging.getLogger("uvicorn")
         logger.setLevel(logging.DEBUG)
         logger.handlers.clear()
