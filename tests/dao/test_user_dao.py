@@ -126,7 +126,9 @@ def test_update_user(monkeypatch: MonkeyPatch) -> None:
     initial_user = UserSchemaFactory(id=user_id)
 
     dao = UserDAO(session)
-    dao._get_user = MagicMock(return_value=deepcopy(initial_user))  # type: ignore
+    dao._get_user = MagicMock(  # type: ignore
+        return_value=deepcopy(initial_user)
+    )
 
     user_payload = UserUpdatePayload(
         username="boofar"
