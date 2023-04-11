@@ -23,5 +23,4 @@ def get_session() -> Generator[Session, None, None]:
     try:
         yield session
     finally:
-        session.commit()
         session.close()
