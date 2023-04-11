@@ -17,3 +17,7 @@ class UserRegistrationPayload(BaseModel):
 class UserRegistrationResult(BaseModel):
     username: str
     email: str
+
+
+class UserUpdatePayload(BaseModel):
+    username: str

@@ -1,4 +1,5 @@
 import uuid
+from copy import deepcopy
 from unittest.mock import MagicMock
 
 from pytest import MonkeyPatch, raises
@@ -6,9 +7,10 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from corn.dao.user import UserDAO
-from corn.exc.dao import AlreadyExistsException
+from corn.exc.dao import AlreadyExistsException, EntityNotFoundException
 from corn.models.factories.user_factory import UserSchemaFactory
-from corn.models.pydantic.user import UserRegistrationPayload, UserSchema
+from corn.models.pydantic.user import (UserRegistrationPayload, UserSchema,
+                                       UserUpdatePayload)
 from corn.models.sqlalchemy.user import User
 
 
@@ -79,7 +81,7 @@ def test_get_user_no_user(monkeypatch: MonkeyPatch) -> None:
 
 
 def test_create_user(monkeypatch: MonkeyPatch) -> None:
-    class MockedSession():
+    class MockedSession:
         def commit(self, payload: User) -> None:
             payload.id = str(uuid.UUID(int=0))
 
@@ -116,3 +118,37 @@ def test_create_user_existing_user(monkeypatch: MonkeyPatch) -> None:
         dao.create_user(user_payload)
 
     assert session.rollback.called
+
+
+def test_update_user(monkeypatch: MonkeyPatch) -> None:
+    session = MagicMock()
+    user_id = str(uuid.UUID(int=0))
+    initial_user = UserSchemaFactory(id=user_id)
+
+    dao = UserDAO(session)
+    dao._get_user = MagicMock(return_value=deepcopy(initial_user))  # type: ignore
+
+    user_payload = UserUpdatePayload(
+        username="boofar"
+    )
+
+    updated_user = dao.update_user(user_id, user_payload)
+
+    assert updated_user.username == user_payload.username
+    assert updated_user.username != initial_user.__dict__["username"]
+
+
+def test_update_user_missing_target_user(monkeypatch: MonkeyPatch) -> None:
+    session = MagicMock()
+    session.rollback = MagicMock()
+    user_id = str(uuid.UUID(int=0))
+
+    dao = UserDAO(session)
+    dao._get_user = MagicMock(return_value=None)  # type: ignore
+
+    user_payload = UserUpdatePayload(
+        username="boofar"
+    )
+
+    with raises(EntityNotFoundException):
+        dao.update_user(user_id, user_payload)

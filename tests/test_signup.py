@@ -3,8 +3,11 @@ import json
 from pytest import MonkeyPatch
 from starlette.testclient import TestClient
 
+from corn.dao.user import UserDAO
+from corn.exc.dao import AlreadyExistsException
 
-def test_signup_valid(tc: TestClient):
+
+def test_signup_valid(tc: TestClient) -> None:
     # GIVEN
 
     user_payload = {
@@ -24,7 +27,21 @@ def test_signup_valid(tc: TestClient):
     assert response.json()["email"] == user_payload["email"]
 
 
-def test_signup_already_exists(monkeypatch: MonkeyPatch(), tc: TestClient):
+def create_user_mock(_self, _payload) -> None:
+    raise AlreadyExistsException()
+    return
+
+
+def test_signup_already_exists(
+        monkeypatch: MonkeyPatch,
+        tc: TestClient
+) -> None:
+    monkeypatch.setattr(
+        UserDAO,
+        "create_user",
+        create_user_mock
+    )
+
     # GIVEN
 
     user_payload = {

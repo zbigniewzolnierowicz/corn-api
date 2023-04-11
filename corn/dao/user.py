@@ -4,8 +4,9 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from corn.db import get_session
-from corn.exc.dao import AlreadyExistsException
-from corn.models.pydantic.user import UserRegistrationPayload, UserSchema
+from corn.exc.dao import AlreadyExistsException, EntityNotFoundException
+from corn.models.pydantic.user import (UserRegistrationPayload, UserSchema,
+                                       UserUpdatePayload)
 from corn.models.sqlalchemy.user import User
 
 
@@ -62,5 +63,22 @@ class UserDAO:
 
         return new_user
 
-    def update_user(self, user_id: str, update: UserSchema) -> UserSchema:
-        pass
+    def update_user(
+            self,
+            user_id: str,
+            update: UserUpdatePayload
+    ) -> UserSchema:
+        user = self._get_user(user_id)
+
+        if user is None:
+            self.session.rollback()
+            raise EntityNotFoundException()
+
+        user.username = update.username
+
+        try:
+            self.session.commit()
+        except:  # noqa: E722
+            self.session.rollback()
+
+        return UserSchema(**user.__dict__)
