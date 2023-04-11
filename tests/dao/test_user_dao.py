@@ -2,7 +2,7 @@ import uuid
 from copy import deepcopy
 from unittest.mock import MagicMock
 
-from pytest import MonkeyPatch, raises
+import pytest
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -14,7 +14,7 @@ from corn.models.pydantic.user import (UserRegistrationPayload, UserSchema,
 from corn.models.sqlalchemy.user import User
 
 
-def test_does_user_exist(monkeypatch: MonkeyPatch) -> None:
+def test_does_user_exist(monkeypatch: pytest.MonkeyPatch) -> None:
     class MockedScalars():
         @staticmethod
         def first() -> None:
@@ -43,7 +43,7 @@ def test_does_user_exist_user_already_exists() -> None:
     assert dao.does_user_exist(str(uuid.UUID(int=0)))
 
 
-def test_get_user(monkeypatch: MonkeyPatch) -> None:
+def test_get_user(monkeypatch: pytest.MonkeyPatch) -> None:
     user_id = str(uuid.UUID(int=0))
 
     class MockedScalars():
@@ -62,7 +62,7 @@ def test_get_user(monkeypatch: MonkeyPatch) -> None:
     assert user.id == user_id
 
 
-def test_get_user_no_user(monkeypatch: MonkeyPatch) -> None:
+def test_get_user_no_user(monkeypatch: pytest.MonkeyPatch) -> None:
     user_id = str(uuid.UUID(int=0))
 
     class MockedScalars():
@@ -80,7 +80,7 @@ def test_get_user_no_user(monkeypatch: MonkeyPatch) -> None:
     assert user is None
 
 
-def test_create_user(monkeypatch: MonkeyPatch) -> None:
+def test_create_user(monkeypatch: pytest.MonkeyPatch) -> None:
     class MockedSession:
         def commit(self, payload: User) -> None:
             payload.id = str(uuid.UUID(int=0))
@@ -100,7 +100,7 @@ def test_create_user(monkeypatch: MonkeyPatch) -> None:
     assert new_user.email == user_payload.email
 
 
-def test_create_user_existing_user(monkeypatch: MonkeyPatch) -> None:
+def test_create_user_existing_user(monkeypatch: pytest.MonkeyPatch) -> None:
     session = MagicMock()
     session.rollback = MagicMock()
     session.commit = MagicMock(
@@ -114,13 +114,13 @@ def test_create_user_existing_user(monkeypatch: MonkeyPatch) -> None:
         **UserSchemaFactory().__dict__
     )
 
-    with raises(AlreadyExistsException):
+    with pytest.raises(AlreadyExistsException):
         dao.create_user(user_payload)
 
     assert session.rollback.called
 
 
-def test_update_user(monkeypatch: MonkeyPatch) -> None:
+def test_update_user(monkeypatch: pytest.MonkeyPatch) -> None:
     session = MagicMock()
     user_id = str(uuid.UUID(int=0))
     initial_user = UserSchemaFactory(id=user_id)
@@ -140,7 +140,9 @@ def test_update_user(monkeypatch: MonkeyPatch) -> None:
     assert updated_user.username != initial_user.__dict__["username"]
 
 
-def test_update_user_missing_target_user(monkeypatch: MonkeyPatch) -> None:
+def test_update_user_missing_target_user(
+        monkeypatch: pytest.MonkeyPatch
+) -> None:
     session = MagicMock()
     session.rollback = MagicMock()
     user_id = str(uuid.UUID(int=0))
@@ -152,5 +154,5 @@ def test_update_user_missing_target_user(monkeypatch: MonkeyPatch) -> None:
         username="boofar"
     )
 
-    with raises(EntityNotFoundException):
+    with pytest.raises(EntityNotFoundException):
         dao.update_user(user_id, user_payload)
