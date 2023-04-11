@@ -26,7 +26,7 @@ def session_override() -> Generator[Session, None, None]:
             s.close()
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def tc() -> Generator[TestClient, None, None]:
     app = create_app()
 
