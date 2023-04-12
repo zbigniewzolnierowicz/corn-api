@@ -17,6 +17,12 @@ types-factory-boy = "^0.4.1"
 
 [tool.poetry.group.dev.dependencies]
 tox = "^4.4.11"
+coverage = "^7.2.3"
+
+[tool.poetry.group.lsp.dependencies]
+python-lsp-server = {extras = ["all"], version = "^1.7.2"}
+pylsp-mypy = "^0.6.6"
+pyls-isort = "^0.2.2"
 
 [build-system]
 requires = ["poetry-core"]
