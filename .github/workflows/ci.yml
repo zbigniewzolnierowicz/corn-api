@@ -27,7 +27,5 @@ jobs:
     - uses: extractions/setup-just@v1
     - name: Run Tox
       run: just test-ci
-    - name: testing
-      run: date && ls -al
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
