@@ -28,6 +28,6 @@ jobs:
     - name: Run Tox
       run: just test-ci
     - name: testing
-      run: ls -al
+      run: date && ls -al
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
