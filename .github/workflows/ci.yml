@@ -26,4 +26,4 @@ jobs:
       run: poetry install --without=lsp
     - uses: extractions/setup-just@v1
     - name: Run Tox
-      run: just test
+      run: just test-ci

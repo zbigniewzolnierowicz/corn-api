@@ -6,11 +6,7 @@ dev:
     poetry run uvicorn corn.main:app --port 8000 --reload
 test:
     poetry run tox run-parallel
-test-unit:
-    poetry run tox -e unit
-test-type:
-    poetry run tox -e type
-test-lint:
-    poetry run tox -e lint
+test-ci:
+    poetry run tox run-parallel -o
 deps:
     docker compose up -d
