@@ -1,12 +1,15 @@
 from typing import Generator
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, declarative_base, sessionmaker
+from sqlalchemy.orm import DeclarativeBase, Session, registry, sessionmaker
 
 from corn.config import settings
 
-Base = declarative_base()
+reg = registry()
 
+
+class Base(DeclarativeBase):
+    registry = reg
 
 def session_factory() -> Session:
     engine = create_engine(str(settings.database_url))

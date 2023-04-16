@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from corn.db import get_session
 from corn.exc.dao import AlreadyExistsException, EntityNotFoundException
+from corn.hasher import hasher
 from corn.models.pydantic.user import (UserRegistrationPayload, UserSchema,
                                        UserUpdatePayload)
 from corn.models.sqlalchemy.user import User
@@ -13,6 +14,7 @@ from corn.models.sqlalchemy.user import User
 class UserDAO:
     def __init__(self, session: Session = Depends(get_session)):
         self.session = session
+        self.hasher = hasher
 
     def _get_user(self, id: str) -> User | None:
         stmt = select(User).where(User.id == id)
@@ -44,11 +46,13 @@ class UserDAO:
 
         return None
 
-    def create_user(self, payload: UserRegistrationPayload) -> UserSchema:
+    def create_user(self, payload: UserRegistrationPayload) -> User:
+        password_hash = self.hasher.hash(payload.password)
+
         new_user = User(
             username=payload.username,
             email=payload.email,
-            password_hash=f"hashed{payload.password}"
+            password_hash=password_hash
         )
 
         self.session.add(new_user)

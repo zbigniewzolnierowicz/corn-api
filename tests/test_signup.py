@@ -5,29 +5,26 @@ from starlette.testclient import TestClient
 
 from corn.dao.user import UserDAO
 from corn.exc.dao import AlreadyExistsException
+from corn.models.factories.user_factory import UserRegistrationPayloadFactory
 
 
 def test_signup_valid(tc: TestClient) -> None:
     # GIVEN
 
-    user_payload = {
-        "username": "foo",
-        "password": "bar",
-        "email": "foobar@example.com"
-    }
+    user_payload = UserRegistrationPayloadFactory()
 
     # WHEN
 
-    response = tc.post("/user/new", content=json.dumps(user_payload))
+    response = tc.post("/user/new", content=json.dumps(user_payload.__dict__))
 
     # THEN
 
     assert response.status_code == 200
-    assert response.json()["username"] == user_payload["username"]
-    assert response.json()["email"] == user_payload["email"]
+    assert response.json()["username"] == user_payload.username
+    assert response.json()["email"] == user_payload.email
 
 
-def create_user_mock(_self, _payload) -> None:
+def create_user_mock(_self: None, _payload: None) -> None:
     raise AlreadyExistsException()
     return
 
@@ -44,15 +41,11 @@ def test_signup_already_exists(
 
     # GIVEN
 
-    user_payload = {
-        "username": "foo",
-        "password": "bar",
-        "email": "foobar@example.com"
-    }
+    user_payload = UserRegistrationPayloadFactory()
 
     # WHEN
 
-    response = tc.post("/user/new", content=json.dumps(user_payload))
+    response = tc.post("/user/new", content=json.dumps(user_payload.__dict__))
 
     # THEN
 

@@ -98,6 +98,8 @@ def test_create_user(monkeypatch: pytest.MonkeyPatch) -> None:
 
     assert new_user.username == user_payload.username
     assert new_user.email == user_payload.email
+    assert user_payload.password not in new_user.password_hash
+    assert new_user.check_password(user_payload.password)
 
 
 def test_create_user_existing_user(monkeypatch: pytest.MonkeyPatch) -> None:
