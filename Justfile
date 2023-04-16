@@ -1,5 +1,7 @@
 set dotenv-load
 
+list:
+    just -l
 run:
     poetry run uvicorn corn.main:app --port 8000
 dev:
