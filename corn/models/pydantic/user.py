@@ -15,6 +15,7 @@ class UserRegistrationPayload(BaseModel):
 
 
 class UserRegistrationResult(BaseModel):
+    id: str
     username: str
     email: str
 

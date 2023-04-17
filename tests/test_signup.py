@@ -16,12 +16,14 @@ def test_signup_valid(tc: TestClient) -> None:
     # WHEN
 
     response = tc.post("/user/new", content=json.dumps(user_payload.__dict__))
+    result_json = response.json()
 
     # THEN
 
     assert response.status_code == 200
-    assert response.json()["username"] == user_payload.username
-    assert response.json()["email"] == user_payload.email
+    assert result_json["id"] is not None
+    assert result_json["username"] == user_payload.username
+    assert result_json["email"] == user_payload.email
 
 
 def create_user_mock(_self: None, _payload: None) -> None:
