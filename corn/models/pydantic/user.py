@@ -22,3 +22,9 @@ class UserRegistrationResult(BaseModel):
 
 class UserUpdatePayload(BaseModel):
     username: str
+
+
+class UserLoginPayload(BaseModel):
+    username: str | None
+    email: str | None
+    password: str
