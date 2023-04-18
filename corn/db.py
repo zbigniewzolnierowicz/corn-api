@@ -4,9 +4,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import (DeclarativeBase, Session, declarative_base,
                             sessionmaker)
 
-from corn.config import settings
+from corn.config import pg_settings
 
-engine = create_engine(str(settings.database_url))
+engine = create_engine(str(pg_settings.database_url()))
 
 
 def session_factory() -> Session:

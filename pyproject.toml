@@ -16,6 +16,7 @@ faker = "^18.4.0"
 types-factory-boy = "^0.4.1"
 argon2-cffi = "^21.3.0"
 alembic = "^1.10.3"
+sqlalchemy-utils = "^0.41.0"
 
 [tool.poetry.group.dev.dependencies]
 tox = "^4.4.11"
@@ -41,3 +42,4 @@ plugins = "sqlalchemy.ext.mypy.plugin"
 
 [tool.ruff]
 exclude = ["corn/alembic"]
+extend-select = ["T20"]

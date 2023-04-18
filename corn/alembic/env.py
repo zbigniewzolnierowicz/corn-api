@@ -5,7 +5,7 @@ from sqlalchemy import engine_from_config, pool
 
 # WARN: This is necessary for all the metadata to be imported
 import corn.models.sqlalchemy.user  # noqa: F401
-from corn.config import settings
+from corn.config import pg_settings
 from corn.db import Base
 
 # this is the Alembic Config object, which provides
@@ -22,7 +22,7 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata
-url = config.get_main_option("sqlalchemy.url", str(settings.database_url))
+url = config.get_main_option("sqlalchemy.url", pg_settings.database_url())
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
