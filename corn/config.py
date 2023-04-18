@@ -26,6 +26,7 @@ class PostgresSettings(BaseSettings):
 
     class Config:
         env_prefix = "POSTGRES_"
+        env_file = ".env"
 
 
 settings: Settings = Settings()

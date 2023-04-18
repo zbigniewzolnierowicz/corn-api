@@ -45,6 +45,6 @@ jobs:
     - name: Run Tox
       run: just test-ci
       env:
-        POSTGRES_HOST: postgres
+        POSTGRES_HOST: localhost
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
