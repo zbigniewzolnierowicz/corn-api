@@ -1,0 +1,10 @@
+version: '3.6'
+services:
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_PASSWORD=corn
+      - POSTGRES_USER=corn
+      - POSTGRES_DB=corn
+    ports:
+      - '5432:5432'
