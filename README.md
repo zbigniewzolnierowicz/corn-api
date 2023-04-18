@@ -11,10 +11,10 @@
 ``` sh
 just install
 ```
-3. Start postgres:
+3. Start services:
 
 ``` sh
-[TODO]: add docker-compose
+docker compose up -d
 ```
 
 4. Start dev server:
@@ -28,3 +28,10 @@ just dev
 ``` sh
 just test
 ```
+
+6. For linting, run:
+
+``` sh
+just lint
+```
+
