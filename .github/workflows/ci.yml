@@ -9,9 +9,26 @@ on:
 permissions:
   contents: read
 
+env:
+  POSTGRES_PASSWORD: corn
+  POSTGRES_USER: corn
+  POSTGRES_DB: corn
+
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: corn
+          POSTGRES_USER: corn
+          POSTGRES_DB: corn
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
     - uses: actions/checkout@v3
     - name: Install Python 3.10
@@ -27,5 +44,7 @@ jobs:
       run: just install-ci
     - name: Run Tox
       run: just test-ci
+      env:
+        POSTGRES_HOST: postgres
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
