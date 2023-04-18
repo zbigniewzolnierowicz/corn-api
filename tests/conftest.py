@@ -1,36 +1,77 @@
-from typing import Generator
+import logging
+import pathlib
+from typing import Any, Generator
 
+import alembic
+import alembic.config
 import pytest
-from sqlalchemy import MetaData, create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session, sessionmaker
 from starlette.testclient import TestClient
 
-from corn.db import Base, get_session
+from corn.config import pg_settings
+from corn.db import engine, get_session
 from corn.main import create_app
 
-
-def session_override() -> Generator[Session, None, None]:
-    engine = create_engine(url="sqlite://")
-    Base.metadata.create_all(bind=engine)
-
-    with engine.begin() as conn:
-        MetaData().create_all(bind=conn)
-
-    session: sessionmaker[Session] = sessionmaker(bind=engine)
-
-    with session() as s:
-        try:
-            yield s
-        finally:
-            s.commit()
-            s.close()
+logging.getLogger('sqlalchemy.engine').setLevel(logging.DEBUG)
 
 
-@pytest.fixture(scope="module")
-def tc() -> Generator[TestClient, None, None]:
+def session_override(worker_id: str, request: pytest.FixtureRequest) -> Any:
+    def session_generator() -> Generator[Session, None, None]:
+        unique_id: str = request.module.__name__.replace(
+                "*", "_"
+            ).replace(
+                ".", "_"
+            )
+        test_db_name = f"{engine.url.database}_tests_{worker_id}_{unique_id}"
+        db_url = pg_settings.database_url(test_db_name)
+
+        with engine.connect().execution_options(
+                isolation_level="AUTOCOMMIT"
+        ) as connection:
+            connection.execute(text(f"DROP DATABASE IF EXISTS {test_db_name}"))
+            connection.execute(text(f"CREATE DATABASE {test_db_name}"))
+
+        testing_db_url = engine.url.set(database=test_db_name)
+        test_db_engine = create_engine(testing_db_url, echo=True)
+        session: sessionmaker[Session] = sessionmaker(bind=test_db_engine)
+
+        script_location = (
+            pathlib.Path(__file__).parent.parent / "corn/alembic"
+        )
+        config = alembic.config.Config()
+        config.set_main_option("script_location", str(script_location))
+        config.set_main_option(
+            "sqlalchemy.url",
+            db_url
+        )
+        alembic.command.upgrade(config=config, revision="head")
+
+        with session() as s:
+            try:
+                yield s
+            except:  # noqa: E722
+                s.rollback()
+            finally:
+                s.commit()
+                s.close()
+
+        test_db_engine.dispose()
+
+    return session_generator
+
+
+@pytest.fixture(scope="module", autouse=True)
+def tc(
+        worker_id: str,
+        request: pytest.FixtureRequest
+) -> Generator[TestClient, None, None]:
     app = create_app()
 
-    app.dependency_overrides[get_session] = session_override
+    app.dependency_overrides[get_session] = session_override(
+        worker_id=worker_id,
+        request=request
+    )
 
     with TestClient(app) as tc:
         yield tc
