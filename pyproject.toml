@@ -38,3 +38,6 @@ strict = true
 
 [tool.mypy]
 plugins = "sqlalchemy.ext.mypy.plugin"
+
+[tool.ruff]
+exclude = ["corn/alembic"]
