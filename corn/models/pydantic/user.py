@@ -25,6 +25,9 @@ class UserUpdatePayload(BaseModel):
 
 
 class UserLoginPayload(BaseModel):
-    username: str | None
-    email: str | None
+    username_or_email: str
     password: str
+
+
+class UserLoginResult(BaseModel):
+    token: str

@@ -20,7 +20,10 @@ class User(Base, HasCreatedAt):
     username: str = Column(String, unique=True)
     password_hash: str = Column(String)
     email: str = Column(String, unique=True)
-    refresh_tokens: Mapped[List["RefreshToken"]] = relationship("RefreshToken")
+    refresh_tokens: Mapped[List["RefreshToken"]] = relationship(
+        "RefreshToken",
+        back_populates="user"
+    )
 
     def check_password(self, password: str) -> bool:
         return hasher.verify(self.password_hash, password)
@@ -36,5 +39,5 @@ class RefreshToken(Base, HasCreatedAt):
     user_id: str = Column(
         ForeignKey("user_accounts.id", ondelete="CASCADE")
     )
-    user: Mapped[User] = relationship(User)
+    user: Mapped[User] = relationship(User, back_populates="refresh_tokens")
     hashed_token = Column(String)

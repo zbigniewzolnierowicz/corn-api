@@ -13,8 +13,6 @@ from corn.config import pg_settings
 from corn.db import engine, get_session
 from corn.main import create_app
 
-logging.getLogger('sqlalchemy.engine').setLevel(logging.DEBUG)
-
 
 def session_override(worker_id: str, request: pytest.FixtureRequest) -> Any:
     def session_generator() -> Generator[Session, None, None]:
@@ -33,7 +31,7 @@ def session_override(worker_id: str, request: pytest.FixtureRequest) -> Any:
             connection.execute(text(f"CREATE DATABASE {test_db_name}"))
 
         testing_db_url = engine.url.set(database=test_db_name)
-        test_db_engine = create_engine(testing_db_url, echo=True)
+        test_db_engine = create_engine(testing_db_url)
         session: sessionmaker[Session] = sessionmaker(bind=test_db_engine)
 
         script_location = (
