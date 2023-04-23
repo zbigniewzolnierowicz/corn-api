@@ -72,7 +72,7 @@ def test_login_missing_email(tc: TestClient) -> None:
     tc.post("/user/new", content=json.dumps(new_user_payload))
 
     login_payload = {
-        "username": new_user_payload["username"]
+        "password": new_user_payload["password"]
     }
 
     # WHEN
