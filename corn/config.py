@@ -1,3 +1,6 @@
+from datetime import timedelta
+
+from cryptography.hazmat.backends import default_backend
 from pydantic import BaseSettings
 
 
@@ -29,5 +32,16 @@ class PostgresSettings(BaseSettings):
         env_file = ".env"
 
 
+class JWTSettings(BaseSettings):
+    secret: str
+    expiration: int = timedelta(hours=1).seconds
+    algorithm: str = "RS256"
+
+    class Config:
+        env_prefix = "JWT_"
+        env_file = ".env"
+
+
 settings: Settings = Settings()
 pg_settings: PostgresSettings = PostgresSettings()
+jwt_settings: JWTSettings = JWTSettings()  # type: ignore

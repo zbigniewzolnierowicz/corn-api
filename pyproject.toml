@@ -18,6 +18,8 @@ argon2-cffi = "^21.3.0"
 alembic = "^1.10.3"
 sqlalchemy-utils = "^0.41.0"
 httpx = "^0.24.0"
+pyjwt = "^2.6.0"
+cryptography = "^40.0.2"
 
 [tool.poetry.group.dev.dependencies]
 tox = "^4.4.11"

@@ -1,5 +1,9 @@
+from datetime import datetime, timedelta, timezone
+
+import jwt
 from fastapi import APIRouter, Depends, HTTPException
 
+from corn.config import jwt_settings
 from corn.dao.user import UserDAO
 from corn.exc.dao import AlreadyExistsException
 from corn.exc.http.auth import (IncorrectPasswordException,
@@ -39,4 +43,16 @@ def login(
     if not possible_user.check_password(payload.password):
         raise IncorrectPasswordException()
 
-    raise HTTPException(status_code=418, detail="Not implemented yet")
+    now = datetime.now(timezone.utc)
+    message = {
+        "iss": "http://localhost",
+        "sub": possible_user.id,
+        "iat": now,
+        "exp": now + timedelta(seconds=jwt_settings.expiration)
+    }
+
+    token = jwt.encode(message, jwt_settings.secret)
+
+    return UserLoginResult(
+        token=token
+    )

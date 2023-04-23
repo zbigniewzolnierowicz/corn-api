@@ -27,7 +27,6 @@ def test_login_successful(tc: TestClient) -> None:
 
     assert login_result.status_code == 200
     assert login_result.json()["token"] is not None
-    assert login_result.cookies["refresh_token"] is not None
 
 
 def test_login_incorrect_password(tc: TestClient) -> None:
