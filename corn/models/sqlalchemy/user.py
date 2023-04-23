@@ -1,6 +1,7 @@
 import uuid
 from typing import List
 
+from argon2.exceptions import Argon2Error
 from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.orm import Mapped, relationship
 
@@ -26,7 +27,10 @@ class User(Base, HasCreatedAt):
     )
 
     def check_password(self, password: str) -> bool:
-        return hasher.verify(self.password_hash, password)
+        try:
+            return hasher.verify(self.password_hash, password)
+        except Argon2Error:
+            return False
 
 
 class RefreshToken(Base, HasCreatedAt):

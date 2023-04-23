@@ -28,6 +28,18 @@ class UserDAO:
 
         return user
 
+    def get_user_by_username_or_email(
+            self,
+            username_or_email: str
+    ) -> User | None:
+        stmt = select(User).where(
+            (User.email == username_or_email) |
+            (User.username == username_or_email)
+        )
+        user = self.session.scalars(stmt).first()
+
+        return user
+
     def does_user_exist(self, id: str) -> bool:
         user = self._get_user(id)
 
