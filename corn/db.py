@@ -1,8 +1,7 @@
 from typing import Generator
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import (DeclarativeBase, Session, declarative_base,
-                            sessionmaker)
+from sqlalchemy.orm import Session, as_declarative, sessionmaker
 
 from corn.config import pg_settings
 
@@ -26,4 +25,6 @@ def get_session() -> Generator[Session, None, None]:
         session.close()
 
 
-Base: DeclarativeBase = declarative_base()
+@as_declarative()
+class Base(object):
+    pass
