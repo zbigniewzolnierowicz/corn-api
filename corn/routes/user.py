@@ -1,7 +1,6 @@
-from datetime import datetime, timedelta, timezone
 
 import jwt
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 
 from corn.config import jwt_settings
 from corn.dao.user import UserDAO
@@ -10,7 +9,8 @@ from corn.exc.http.auth import (IncorrectPasswordException,
                                 UserDoesNotExistException)
 from corn.models.pydantic.user import (UserLoginPayload, UserLoginResult,
                                        UserRegistrationPayload,
-                                       UserRegistrationResult)
+                                       UserRegistrationResult, UserToken)
+from corn.utils.auth import JWTBearer
 
 router = APIRouter()
 
@@ -43,16 +43,22 @@ def login(
     if not possible_user.check_password(payload.password):
         raise IncorrectPasswordException()
 
-    now = datetime.now(timezone.utc)
-    message = {
-        "iss": "http://localhost",
-        "sub": possible_user.id,
-        "iat": now,
-        "exp": now + timedelta(seconds=jwt_settings.expiration)
-    }
+    message = UserToken(
+        iss="http://localhost",
+        sub=possible_user.id
+    )
 
-    token = jwt.encode(message, jwt_settings.secret)
+    token = jwt.encode(message.__dict__, jwt_settings.secret)
 
     return UserLoginResult(
         token=token
     )
+
+
+@router.get("/me")
+async def user_info(
+        request: Request,
+        user_dao: UserDAO = Depends(UserDAO),
+        jwt: str = Depends(JWTBearer())
+) -> UserToken:
+    return UserToken.from_jwt(jwt)

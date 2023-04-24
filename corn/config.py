@@ -35,7 +35,7 @@ class PostgresSettings(BaseSettings):
 class JWTSettings(BaseSettings):
     secret: str
     expiration: int = timedelta(hours=1).seconds
-    algorithm: str = "RS256"
+    algorithm: str = "HS256"
 
     class Config:
         env_prefix = "JWT_"
