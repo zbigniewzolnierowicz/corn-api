@@ -1,6 +1,5 @@
 from datetime import timedelta
 
-from cryptography.hazmat.backends import default_backend
 from pydantic import BaseSettings
 
 

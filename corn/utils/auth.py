@@ -39,8 +39,7 @@ class JWTBearer(HTTPBearer):
                 jwt_settings.secret,
                 algorithms=[jwt_settings.algorithm]
             )
-        except Exception as e:
-            print(e)
+        except Exception:
             payload = None
         if payload:
             isTokenValid = True

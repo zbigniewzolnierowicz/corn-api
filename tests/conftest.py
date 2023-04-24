@@ -1,6 +1,5 @@
-import logging
 import pathlib
-from typing import Any, Generator
+from typing import Generator
 
 import alembic
 import alembic.config
