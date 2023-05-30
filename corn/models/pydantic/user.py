@@ -49,7 +49,7 @@ class UserToken(BaseModel):
         return (self.iat + timedelta(seconds=jwt_settings.expiration))
 
     @classmethod
-    def from_jwt(self, token: str) -> "UserToken":
+    def from_jwt(cls, token: str) -> "UserToken":
         try:
             parsed_jwt = jwt.decode(
                 token,
@@ -62,4 +62,4 @@ class UserToken(BaseModel):
         if parsed_jwt is None:
             raise BadJWTException()
 
-        return self(**parsed_jwt)
+        return cls(**parsed_jwt)

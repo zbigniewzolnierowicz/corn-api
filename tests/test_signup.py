@@ -1,10 +1,11 @@
 import json
+from http import HTTPStatus
 
 from pytest import MonkeyPatch
 from starlette.testclient import TestClient
 
 from corn.dao.user import UserDAO
-from corn.exc.dao import AlreadyExistsException
+from corn.exc.dao import AlreadyExistsError
 from corn.models.factories.user_factory import UserRegistrationPayloadFactory
 
 
@@ -20,14 +21,14 @@ def test_signup_valid(tc: TestClient) -> None:
 
     # THEN
 
-    assert response.status_code == 200
+    assert response.status_code == HTTPStatus.OK
     assert result_json["id"] is not None
     assert result_json["username"] == user_payload.username
     assert result_json["email"] == user_payload.email
 
 
 def create_user_mock(_self: None, _payload: None) -> None:
-    raise AlreadyExistsException()
+    raise AlreadyExistsError()
 
 
 def test_signup_already_exists(
@@ -50,5 +51,5 @@ def test_signup_already_exists(
 
     # THEN
 
-    assert response.status_code == 409
+    assert response.status_code == HTTPStatus.CONFLICT
     assert response.json()["detail"] == "User already exists."

@@ -7,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from corn.dao.user import UserDAO
-from corn.exc.dao import AlreadyExistsException, EntityNotFoundException
+from corn.exc.dao import AlreadyExistsException, EntityNotFoundError
 from corn.models.factories.user_factory import UserSchemaFactory
 from corn.models.pydantic.user import (
     UserRegistrationPayload,
@@ -93,8 +93,8 @@ def test_create_user(monkeypatch: pytest.MonkeyPatch) -> None:
     dao = UserDAO(session)
 
     user_payload = UserRegistrationPayload(
-        password="foobar",
-        **UserSchemaFactory().__dict__
+            password="foobar", # noqa: S106
+            **UserSchemaFactory().__dict__
     )
 
     new_user = dao.create_user(user_payload)
@@ -115,7 +115,7 @@ def test_create_user_existing_user(monkeypatch: pytest.MonkeyPatch) -> None:
     dao = UserDAO(session)
 
     user_payload = UserRegistrationPayload(
-        password="foobar",
+        password="foobar", # noqa: S106
         **UserSchemaFactory().__dict__
     )
 
@@ -159,5 +159,5 @@ def test_update_user_missing_target_user(
         username="boofar"
     )
 
-    with pytest.raises(EntityNotFoundException):
+    with pytest.raises(EntityNotFoundError):
         dao.update_user(user_id, user_payload)

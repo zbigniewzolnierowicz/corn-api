@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 
 from corn.config import jwt_settings
 from corn.dao.user import UserDAO
-from corn.exc.dao import AlreadyExistsException
-from corn.exc.http.auth import IncorrectPasswordException, UserDoesNotExistException
+from corn.exc.dao import AlreadyExistsError
+from corn.exc.http.auth import IncorrectPasswordError, UserDoesNotExistError
 from corn.models.pydantic.user import (
     UserLoginPayload,
     UserLoginResult,
@@ -27,7 +27,7 @@ def signup(
         new_user = user_dao.create_user(payload)
 
         return UserRegistrationResult(**new_user.__dict__)
-    except AlreadyExistsException:
+    except AlreadyExistsError:
         raise HTTPException(status_code=409, detail="User already exists.")
 
 
@@ -41,10 +41,10 @@ def login(
     )
 
     if possible_user is None:
-        raise UserDoesNotExistException()
+        raise UserDoesNotExistError()
 
     if not possible_user.check_password(payload.password):
-        raise IncorrectPasswordException()
+        raise IncorrectPasswordError()
 
     message = UserToken(
         iss="http://localhost",
