@@ -1,4 +1,5 @@
 import json
+from http import HTTPStatus
 
 from httpx import Response
 from starlette.testclient import TestClient
@@ -25,7 +26,7 @@ def test_login_successful(tc: TestClient) -> None:
         content=json.dumps(login_payload)
     )
 
-    assert login_result.status_code == 200
+    assert login_result.status_code == HTTPStatus.OK
     assert login_result.json()["token"] is not None
 
 
@@ -37,14 +38,14 @@ def test_login_incorrect_password(tc: TestClient) -> None:
 
     login_payload = UserLoginPayload(
         username_or_email=new_user_payload.username,
-        password="!!!BADPASSWORD!!!"
+        password="!!!BADPASSWORD!!!" # noqa: S106
     ).__dict__
 
     # WHEN
 
     login_result = tc.post("/user/login", content=json.dumps(login_payload))
 
-    assert login_result.status_code == 403
+    assert login_result.status_code == HTTPStatus.FORBIDDEN
     assert login_result.json()["detail"] == "Incorrect password"
 
 
@@ -62,7 +63,7 @@ def test_login_missing_password(tc: TestClient) -> None:
 
     login_result = tc.post("/user/login", content=json.dumps(login_payload))
 
-    assert login_result.status_code == 422
+    assert login_result.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
 
 def test_login_missing_email(tc: TestClient) -> None:
@@ -79,4 +80,4 @@ def test_login_missing_email(tc: TestClient) -> None:
 
     login_result = tc.post("/user/login", content=json.dumps(login_payload))
 
-    assert login_result.status_code == 422
+    assert login_result.status_code == HTTPStatus.UNPROCESSABLE_ENTITY

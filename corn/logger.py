@@ -29,7 +29,7 @@ class CustomLogger(logging.Logger, logging.Formatter):
         return formatter.format(record)
 
     @classmethod
-    def set_as_default(self) -> None:
+    def set_as_default(cls) -> None:
         logger = logging.getLogger("uvicorn")
         logger.setLevel(logging.DEBUG)
         logger.handlers.clear()
