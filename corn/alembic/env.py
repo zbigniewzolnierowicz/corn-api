@@ -3,10 +3,12 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-# WARN: This is necessary for all the metadata to be imported
-import corn.models.sqlalchemy.user  # noqa: F401
+# NOTE: This is necessary for all the metadata to be imported
+import corn.models.sqlalchemy.user  # noqa
 from corn.config import pg_settings
 from corn.db import Base
+
+corn.models.sqlalchemy.user.User
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

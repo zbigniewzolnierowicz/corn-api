@@ -1,4 +1,5 @@
 import json
+from http import HTTPStatus
 
 from starlette.testclient import TestClient
 
@@ -18,4 +19,4 @@ def test_login_successful(tc: TestClient) -> None:
 
     login_result = tc.post("/user/login", content=json.dumps(login_payload))
 
-    assert login_result.status_code == 200
+    assert login_result.status_code == HTTPStatus.OK  # noqa: S101

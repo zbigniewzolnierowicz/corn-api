@@ -18,11 +18,15 @@ logging.getLogger('sqlalchemy.engine').setLevel(logging.DEBUG)
 
 def session_override(worker_id: str, request: pytest.FixtureRequest) -> Any:
     def session_generator() -> Generator[Session, None, None]:
+        # NOTE: generate a unique ID for every test module
+
         unique_id: str = request.module.__name__.replace(
-                "*", "_"
-            ).replace(
-                ".", "_"
-            )
+            "*", "_"
+        ).replace(
+            ".", "_"
+        )
+
+        # NOTE: create a separate database for each worker
         test_db_name = f"{engine.url.database}_tests_{worker_id}_{unique_id}"
         db_url = pg_settings.database_url(test_db_name)
 
@@ -36,6 +40,7 @@ def session_override(worker_id: str, request: pytest.FixtureRequest) -> Any:
         test_db_engine = create_engine(testing_db_url, echo=True)
         session: sessionmaker[Session] = sessionmaker(bind=test_db_engine)
 
+        # NOTE: run migrations
         script_location = (
             pathlib.Path(__file__).parent.parent / "corn/alembic"
         )
