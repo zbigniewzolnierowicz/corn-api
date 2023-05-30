@@ -5,11 +5,14 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from corn.config import jwt_settings
 from corn.dao.user import UserDAO
 from corn.exc.dao import AlreadyExistsException
-from corn.exc.http.auth import (IncorrectPasswordException,
-                                UserDoesNotExistException)
-from corn.models.pydantic.user import (UserLoginPayload, UserLoginResult,
-                                       UserRegistrationPayload,
-                                       UserRegistrationResult, UserToken)
+from corn.exc.http.auth import IncorrectPasswordException, UserDoesNotExistException
+from corn.models.pydantic.user import (
+    UserLoginPayload,
+    UserLoginResult,
+    UserRegistrationPayload,
+    UserRegistrationResult,
+    UserToken,
+)
 from corn.utils.auth import JWTBearer
 
 router = APIRouter()

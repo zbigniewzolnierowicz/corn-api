@@ -18,6 +18,8 @@ test-ci:
     poetry run tox run-parallel -o
 lint:
     poetry run tox run-parallel -e type,lint
+lint-fix:
+    poetry run tox run-parallel -e type,lint-fix
 lint-ci:
     poetry run tox run-parallel -o -e type,lint
 deps:

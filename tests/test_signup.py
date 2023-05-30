@@ -28,7 +28,6 @@ def test_signup_valid(tc: TestClient) -> None:
 
 def create_user_mock(_self: None, _payload: None) -> None:
     raise AlreadyExistsException()
-    return
 
 
 def test_signup_already_exists(

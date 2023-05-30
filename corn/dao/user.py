@@ -6,8 +6,11 @@ from sqlalchemy.orm import Session
 from corn.db import get_session
 from corn.exc.dao import AlreadyExistsException, EntityNotFoundException
 from corn.hasher import hasher
-from corn.models.pydantic.user import (UserRegistrationPayload, UserSchema,
-                                       UserUpdatePayload)
+from corn.models.pydantic.user import (
+    UserRegistrationPayload,
+    UserSchema,
+    UserUpdatePayload,
+)
 from corn.models.sqlalchemy.user import User
 
 
