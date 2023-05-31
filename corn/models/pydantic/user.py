@@ -4,7 +4,7 @@ import jwt
 from pydantic import BaseModel
 
 from corn.config import jwt_settings
-from corn.exc.token import BadJWTException
+from corn.exc.token import BadJWTError
 
 
 class UserSchema(BaseModel):
@@ -43,10 +43,8 @@ class UserToken(BaseModel):
     iss: str
     sub: str
     iat: datetime = datetime.now(timezone.utc)
-
-    @property
-    def exp(self) -> datetime:
-        return (self.iat + timedelta(seconds=jwt_settings.expiration))
+    exp: datetime = (datetime.now(timezone.utc) +
+                     timedelta(seconds=jwt_settings.expiration))
 
     @classmethod
     def from_jwt(cls, token: str) -> "UserToken":
@@ -57,9 +55,9 @@ class UserToken(BaseModel):
                 algorithms=[jwt_settings.algorithm]
             )
         except Exception:
-            raise BadJWTException()
+            raise BadJWTError()
 
         if parsed_jwt is None:
-            raise BadJWTException()
+            raise BadJWTError()
 
         return cls(**parsed_jwt)

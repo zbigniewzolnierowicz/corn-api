@@ -1,6 +1,6 @@
-
 import jwt
 from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.encoders import jsonable_encoder
 
 from corn.config import jwt_settings
 from corn.dao.user import UserDAO
@@ -48,7 +48,7 @@ def login(
 
     message = UserToken(
         iss="http://localhost",
-        sub=possible_user.id
+        sub=possible_user.id,
     )
 
     token = jwt.encode(message.__dict__, jwt_settings.secret)
@@ -64,4 +64,5 @@ async def user_info(
         user_dao: UserDAO = Depends(UserDAO),
         jwt: str = Depends(JWTBearer())
 ) -> UserToken:
-    return UserToken.from_jwt(jwt)
+    token = UserToken.from_jwt(jwt)
+    return token
