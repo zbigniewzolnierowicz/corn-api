@@ -1,6 +1,5 @@
 import jwt
 from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi.encoders import jsonable_encoder
 
 from corn.config import jwt_settings
 from corn.dao.user import UserDAO

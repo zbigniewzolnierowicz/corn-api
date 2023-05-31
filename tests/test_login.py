@@ -38,7 +38,7 @@ def test_login_incorrect_password(tc: TestClient) -> None:
 
     login_payload = UserLoginPayload(
         username_or_email=new_user_payload.username,
-        password="!!!BADPASSWORD!!!" # noqa: S106
+        password="!!!BADPASSWORD!!!"  # noqa: S106
     ).__dict__
 
     # WHEN
