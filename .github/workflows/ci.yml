@@ -48,6 +48,7 @@ jobs:
       run: just test-ci
       env:
         POSTGRES_HOST: localhost
+        JWT_SECRET: jwt-secret-${{ github.run_id }}-${{ github.run_attempt }}
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
   lint:
