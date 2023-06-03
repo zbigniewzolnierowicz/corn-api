@@ -1,10 +1,9 @@
 from typing import Optional
 
-import jwt
 from fastapi import HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from corn.config import jwt_settings
+from corn.models.pydantic.user import UserToken
 
 
 class JWTBearer(HTTPBearer):
@@ -31,16 +30,9 @@ class JWTBearer(HTTPBearer):
             )
 
     def verify_jwt(self, jwtoken: str) -> bool:
-        is_token_valid: bool = False
-
         try:
-            payload = jwt.decode(
-                jwtoken,
-                jwt_settings.secret,
-                algorithms=[jwt_settings.algorithm]
-            )
+            payload = UserToken.from_jwt(jwtoken)
         except Exception:
             payload = None
-        if payload:
-            is_token_valid = True
-        return is_token_valid
+
+        return payload is not None
