@@ -30,6 +30,24 @@ def test_login_successful(tc: TestClient) -> None:
     assert login_result.json()["token"] is not None
 
 
+def test_login_user_does_not_exist(tc: TestClient) -> None:
+    # GIVEN
+
+    new_user_payload = UserRegistrationPayloadFactory()
+
+    login_payload = UserLoginPayload(
+        username_or_email=new_user_payload.username,
+        password=new_user_payload.password
+    ).__dict__
+
+    # WHEN
+
+    login_result = tc.post("/user/login", content=json.dumps(login_payload))
+
+    assert login_result.status_code == HTTPStatus.NOT_FOUND
+    assert login_result.json()["detail"] == "User does not exist"
+
+
 def test_login_incorrect_password(tc: TestClient) -> None:
     # GIVEN
 
