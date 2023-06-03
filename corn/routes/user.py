@@ -5,7 +5,9 @@ from corn.config import jwt_settings
 from corn.dao.user import UserDAO
 from corn.exc.dao import AlreadyExistsError
 from corn.exc.http.auth import IncorrectPasswordError, UserDoesNotExistError
+from corn.exc.token import BadJWTError
 from corn.models.pydantic.user import (
+    PublicUser,
     UserLoginPayload,
     UserLoginResult,
     UserRegistrationPayload,
@@ -57,11 +59,17 @@ def login(
     )
 
 
-@router.get("/me")
+@router.get("/me", response_model=PublicUser)
 async def user_info(
         request: Request,
         user_dao: UserDAO = Depends(UserDAO),
         jwt: str = Depends(JWTBearer())
-) -> UserToken:
+) -> PublicUser:
     token = UserToken.from_jwt(jwt)
-    return token
+
+    user = user_dao.get_user(id=token.sub)
+
+    if user is None:
+        raise BadJWTError()
+
+    return PublicUser(**user.__dict__)

@@ -39,6 +39,14 @@ class UserLoginResult(BaseModel):
     token: str
 
 
+class PublicUser(BaseModel):
+    username: str
+
+
+class PublicUserResult(PublicUser):
+    pass
+
+
 class UserToken(BaseModel):
     iss: str
     sub: str
