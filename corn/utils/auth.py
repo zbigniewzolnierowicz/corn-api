@@ -1,17 +1,16 @@
-from typing import Optional
+from typing import Any, Optional
 
-import jwt
 from fastapi import HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from corn.config import jwt_settings
+from corn.models.pydantic.user import UserToken
 
 
 class JWTBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):
         super(JWTBearer, self).__init__(auto_error=auto_error)
 
-    async def __call__(self, request: Request):  # type: ignore
+    async def __call__(self, request: Request) -> Any:
         credentials: Optional[HTTPAuthorizationCredentials] = await super(
             JWTBearer, self
         ).__call__(request)
@@ -22,7 +21,7 @@ class JWTBearer(HTTPBearer):
                 )
             if not self.verify_jwt(credentials.credentials):
                 raise HTTPException(
-                    status_code=403, detail="Invalid token or expired token."
+                    status_code=403, detail="Invalid or expired token"
                 )
             return credentials.credentials
         else:
@@ -31,16 +30,9 @@ class JWTBearer(HTTPBearer):
             )
 
     def verify_jwt(self, jwtoken: str) -> bool:
-        is_token_valid: bool = False
-
         try:
-            payload = jwt.decode(
-                jwtoken,
-                jwt_settings.secret,
-                algorithms=[jwt_settings.algorithm]
-            )
+            payload = UserToken.from_jwt(jwtoken)
         except Exception:
             payload = None
-        if payload:
-            is_token_valid = True
-        return is_token_valid
+
+        return payload is not None

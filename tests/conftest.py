@@ -13,16 +13,16 @@ from corn.db import engine, get_session
 from corn.main import create_app
 
 
-@pytest.fixture(scope="module", autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 def session_generator(
         request: pytest.FixtureRequest,
         worker_id: str
 ) -> Generator[Session, None, None]:
     unique_id: str = request.module.__name__.replace(
-            "*", "_"
-        ).replace(
-            ".", "_"
-        )
+        "*", "_"
+    ).replace(
+        ".", "_"
+    )
     test_db_name = f"{engine.url.database}_tests_{worker_id}_{unique_id}"
     db_url = pg_settings.database_url(test_db_name)
 
@@ -57,7 +57,7 @@ def session_generator(
     test_db_engine.dispose()
 
 
-@pytest.fixture(scope="module", autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 def tc(
         session_generator: Generator[Session, None, None]
 ) -> Generator[TestClient, None, None]:
