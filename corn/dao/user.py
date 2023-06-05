@@ -4,10 +4,13 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from corn.db import get_session
-from corn.exc.dao import AlreadyExistsException, EntityNotFoundException
+from corn.exc.dao import AlreadyExistsError, EntityNotFoundError
 from corn.hasher import hasher
-from corn.models.pydantic.user import (UserRegistrationPayload, UserSchema,
-                                       UserUpdatePayload)
+from corn.models.pydantic.user import (
+    UserRegistrationPayload,
+    UserSchema,
+    UserUpdatePayload,
+)
 from corn.models.sqlalchemy.user import User
 
 
@@ -24,6 +27,18 @@ class UserDAO:
 
     def _get_user_by_username(self, username: str) -> User | None:
         stmt = select(User).where(User.username == username)
+        user = self.session.scalars(stmt).first()
+
+        return user
+
+    def get_user_by_username_or_email(
+            self,
+            username_or_email: str
+    ) -> User | None:
+        stmt = select(User).where(
+            (User.email == username_or_email) |
+            (User.username == username_or_email)
+        )
         user = self.session.scalars(stmt).first()
 
         return user
@@ -61,7 +76,7 @@ class UserDAO:
             self.session.commit()
         except IntegrityError:
             self.session.rollback()
-            raise AlreadyExistsException()
+            raise AlreadyExistsError()
 
         self.session.refresh(new_user)
 
@@ -76,7 +91,7 @@ class UserDAO:
 
         if user is None:
             self.session.rollback()
-            raise EntityNotFoundException()
+            raise EntityNotFoundError()
 
         user.username = update.username
 

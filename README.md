@@ -17,19 +17,26 @@ just install
 docker compose up -d
 ```
 
-4. Start dev server:
+4. Generate key pair for JWT
+
+``` sh
+just generate-keys
+```
+
+
+5. Start dev server:
 
 ``` sh
 just dev
 ```
 
-5. If you want to run tests, just run:
+6. If you want to run tests, just run:
 
 ``` sh
 just test
 ```
 
-6. For linting, run:
+7. For linting, run:
 
 ``` sh
 just lint

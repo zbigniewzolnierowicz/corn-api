@@ -25,4 +25,4 @@ class UserRegistrationPayloadFactory(BaseUserFactory):
     class Meta:
         model = UserRegistrationPayload
 
-    password = "foobar"
+    password = "foobar" # noqa: S105

@@ -8,8 +8,8 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 fastapi = "^0.95.0"
-uvicorn = {extras = ["standard"], version = "^0.21.1"}
-sqlalchemy = {extras = ["mypy"], version = "^2.0.9"}
+uvicorn = { extras = ["standard"], version = "^0.21.1" }
+sqlalchemy = { extras = ["mypy"], version = "^2.0.9" }
 psycopg2-binary = "^2.9.6"
 factory-boy = "^3.2.1"
 faker = "^18.4.0"
@@ -17,26 +17,18 @@ types-factory-boy = "^0.4.1"
 argon2-cffi = "^21.3.0"
 alembic = "^1.10.3"
 sqlalchemy-utils = "^0.41.0"
+httpx = "^0.24.0"
+pyjwt = "^2.6.0"
+cryptography = "^40.0.2"
 
 [tool.poetry.group.dev.dependencies]
 tox = "^4.4.11"
 coverage = "^7.2.3"
 pytest = "^7.3.1"
 
-[tool.poetry.group.lsp.dependencies]
-python-lsp-server = {extras = ["all"], version = "^1.7.2"}
-pylsp-mypy = "^0.6.6"
-pyls-isort = "^0.2.2"
-python-lsp-ruff = "^1.5.0"
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.pylsp-mypy]
-enabled = true
-live_mode = true
-strict = true
 
 [tool.mypy]
 plugins = "sqlalchemy.ext.mypy.plugin"
@@ -44,3 +36,4 @@ plugins = "sqlalchemy.ext.mypy.plugin"
 [tool.ruff]
 exclude = ["corn/alembic"]
 extend-select = ["T20", "E", "W", "I", "N", "S", "PL"]
+ignore = ["S101"]

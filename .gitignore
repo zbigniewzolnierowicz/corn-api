@@ -7,3 +7,8 @@ __pycache__
 coverage.xml
 htmlcov
 .env
+*.pem
+*.pem.pub
+.venv
+.mypy_cache
+.ruff_cache

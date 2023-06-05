@@ -1,6 +1,6 @@
-class AlreadyExistsException(Exception):
+class AlreadyExistsError(Exception):
     pass
 
 
-class EntityNotFoundException(Exception):
+class EntityNotFoundError(Exception):
     pass
